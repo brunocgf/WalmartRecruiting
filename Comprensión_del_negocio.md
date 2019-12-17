@@ -65,6 +65,28 @@ train %>%
 
 ![](Comprensión_del_negocio_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
 
+Esta información se puede comparar con el número de artículos comprados
+
+``` r
+p1 <- train %>%
+  group_by(TripType) %>% 
+  summarise(n = n_distinct(VisitNumber)) %>% 
+  ggplot() +
+  geom_bar(aes(x = TripType, y = n), stat = 'identity') +
+  labs(title='Número de visitas por tipo de viaje')
+
+p2 <- train %>%
+  group_by(TripType) %>% 
+  summarise(n = sum(ScanCount)) %>% 
+  ggplot() +
+  geom_bar(aes(x = TripType, y = n), stat = 'identity') +
+  labs(title='Artículos comprados por tipo de viaje')
+
+grid.arrange(p1,p2,nrow=2)
+```
+
+![](Comprensión_del_negocio_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+
 A esta información podemos agregar el día de la semana
 
 ``` r
@@ -75,7 +97,7 @@ train %>%
   geom_bar(aes(x = TripType, y = n, fill = Weekday), stat = 'identity')
 ```
 
-![](Comprensión_del_negocio_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+![](Comprensión_del_negocio_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
 
 ``` r
 train %>%
@@ -86,7 +108,7 @@ train %>%
   facet_wrap(~Weekday)
 ```
 
-![](Comprensión_del_negocio_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+![](Comprensión_del_negocio_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
 
 Hay 97715 distintos tipos de productos en los datos Hay 69 distintos
 tipos de productos en los datos
@@ -105,4 +127,4 @@ train %>%
   scale_fill_viridis_c()
 ```
 
-![](Comprensión_del_negocio_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+![](Comprensión_del_negocio_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
