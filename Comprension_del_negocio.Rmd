@@ -1,0 +1,131 @@
+---
+title: "Comprensión del negocio"
+author: "Bruno C. Gonzalez"
+date: "16/12/2019"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(ggthemes)
+library(gridExtra)
+library(kableExtra)
+source("metadata.R")
+source("00-load.R")
+source("01-prepare.R")
+```
+
+
+# Comprención del Negocio
+
+## Antecedentes
+
+El objetivo de la competencia es categorizar las visitas de compras basado en los productos que ha adquirido el cliente, por ejemplo 'visita para una pequeña cena', 'visita para comprar regalos', etc.
+
+Walmart ya ha categorizado los viajes contenidos en estos datos dentro de 38 distintos tipos, usando un metodo propio en un extenso conjunto de datos.
+
+## Determinación del objetivo
+
+El reto es reproducir esta categorización con un conjunto de características más limitado. Esto puede proveer nuevas y más robustas maneras de categorizar los datos.
+
+## Determinación del criterio de éxito
+
+La predicción se evalúa usando la pérdida logarítmica multiclase. Por cada visita se debe ingresar un conjunto de probabilidades por cada *tipo de viaje*.
+
+## Plan del proyecto
+
+
+# Compresión de los datos.
+
+## Análisis Exploratorio de datos
+
+
+Empezamos viendo la estructura de la tabla de entrenamiento.
+```{r}
+head(train)
+```
+
+*TripType* es la etiqueta sobre la que se deben clasificar cada una de las visitas, identificadas por la variable  *VisitNumber*. *Weekday* es el día de la semana en el que se realizó la visita. *Upc* es el código universal del producto, que identifica sobre qué producto se hizo la transacción. *ScanCount* es el número de artículos vendidos (siendo devolución cuando este número es negativo). Tanto *DepartmentDescription* como *FilelineNumber* identifican el departaminto y subdepartamento al que pertenece el artículo.
+
+Ahora veamos algunas propiedades del conjunto de datos.
+
+```{r, message=FALSE, warning=FALSE}
+str(train)
+```
+
+En la tabla anterior podemos ver que existen 38 diferentes tipos de visitas, así como 69 departamentos distintos. A continuación veremos algunas estadísticas de los datos.
+
+```{r}
+summary(train)
+```
+
+De las estadísticas mostradas es importante hacer notar que el número de cada tipo de visitas es inexacto, dado que cada observación de la tabla de datos es por transacción y no por visita. El número de visitas registradas son solo `r length(unique(train$VisitNumber))`. También es interesante ver el número de ventas por tipo de visita. Abajo se muestra el tanto del  número de visitas como el número de transacciones y las ventas como el por tipo de de viaje.
+
+```{r,fig.width = 9}
+p1 <- train %>%
+  group_by(TripType) %>% 
+  summarise(n = n_distinct(VisitNumber)) %>% 
+  ggplot() +
+  geom_bar(aes(x = TripType, y = n), stat = 'identity') +
+  labs(title = 'Número de visitas por tipo de viaje') +
+  theme_hc() +
+  theme(plot.title = element_text(hjust = 0.5),
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank())
+
+p2 <- train %>%
+  group_by(TripType) %>% 
+  summarise(n = n()) %>% 
+  ggplot() +
+  geom_bar(aes(x = TripType, y = n), stat = 'identity') +
+  labs(title = 'Transacciones por tipo de viaje') +
+  theme_hc() +
+  theme(plot.title = element_text(hjust = 0.5),
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank())
+
+p3 <- train %>%
+  group_by(TripType) %>% 
+  summarise(n = sum(ScanCount)) %>% 
+  ggplot() +
+  geom_bar(aes(x = TripType, y = n), stat = 'identity') +
+  labs(title = 'Ventas por tipo de viaje') +
+  theme_hc() +
+  theme(plot.title = element_text(hjust = 0.5),
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank())
+
+grid.arrange(p1,p2,p3,nrow=3)
+```
+
+
+A esta información podemos agregar el día de la semana
+
+
+```{r,fig.width = 9}
+train %>%
+  group_by(TripType, Weekday) %>% 
+  summarise(n = n_distinct(VisitNumber)) %>% 
+  ggplot() +
+  geom_bar(aes(x = TripType, y = n), stat = 'identity') +
+  facet_wrap(~Weekday) +
+  theme_hc()
+```
+
+Hay `r length(unique(train$Upc))` distintos tipos de productos en los datos
+Hay `r length(unique(train$DepartmentDescription))` distintos tipos de productos en los datos
+
+Ahora veamos la relación entre el tipo de viaje y el Departament, con base el número de artículos comprados.
+
+```{r}
+train %>%
+  group_by(TripType, DepartmentDescription) %>% 
+  summarise(n = sum(ScanCount)) %>% 
+  semi_join(train %>% group_by(DepartmentDescription) %>% summarise(n=n()) %>% filter(n>1000),
+            by = 'DepartmentDescription') %>% 
+  ggplot(aes(x = TripType, y = DepartmentDescription, fill = n)) +
+  geom_tile() +
+  scale_fill_viridis_c()
+  
+```
+
