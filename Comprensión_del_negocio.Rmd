@@ -8,6 +8,7 @@ output: github_document
 ```{r setup, include=FALSE}
 library(tidyverse)
 library(hrbrthemes)
+library(gridExtra)
 ```
 
 
@@ -46,6 +47,28 @@ train %>%
   ggplot() +
   geom_bar(aes(x = TripType, y = n), stat = 'identity')
 ```
+
+Esta información se puede comparar con el número de artículos comprados
+
+```{r}
+p1 <- train %>%
+  group_by(TripType) %>% 
+  summarise(n = n_distinct(VisitNumber)) %>% 
+  ggplot() +
+  geom_bar(aes(x = TripType, y = n), stat = 'identity') +
+  labs(title='Número de visitas por tipo de viaje')
+
+p2 <- train %>%
+  group_by(TripType) %>% 
+  summarise(n = sum(ScanCount)) %>% 
+  ggplot() +
+  geom_bar(aes(x = TripType, y = n), stat = 'identity') +
+  labs(title='Artículos comprados por tipo de viaje')
+
+grid.arrange(p1,p2,nrow=2)
+
+```
+
 
 A esta información podemos agregar el día de la semana
 
