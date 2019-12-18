@@ -185,11 +185,23 @@ base el número de artículos comprados.
 train %>%
   group_by(TripType, DepartmentDescription) %>% 
   summarise(n = sum(ScanCount)) %>% 
-  semi_join(train %>% group_by(DepartmentDescription) %>% summarise(n=n()) %>% filter(n>1000),
+  semi_join(train %>% group_by(DepartmentDescription) %>% summarise(n=n()) %>% filter(n>3000),
             by = 'DepartmentDescription') %>% 
   ggplot(aes(x = TripType, y = DepartmentDescription, fill = n)) +
   geom_tile() +
-  scale_fill_viridis_c()
+  scale_fill_continuous(low="white", high="steelblue4") +
+  theme(axis.title.x = element_blank(),
+      axis.title.y = element_blank())
 ```
 
 ![](Comprension_del_negocio_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+
+# Preparación de Datos
+
+## Reporte reproducible de ingeniería de características
+
+Esta función convierte las categorías en variables.
+
+``` r
+train_des <- feature_eng()
+```
