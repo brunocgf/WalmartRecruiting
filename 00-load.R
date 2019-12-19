@@ -1,11 +1,3 @@
-
-# Cargamos los datos de entrenamiento
-train <- read_csv('./data/train.csv',
-                  col_types = cols(
-                    TripType = col_factor(levels = l),
-                    VisitNumber = col_integer(),
-                    Weekday = col_factor(levels = w),
-                    ScanCount = col_integer(),
-                    DepartmentDescription = col_factor(),
-                    FinelineNumber = col_integer()
-                  ))
+source('utils.R')
+train <- carga_datos_entrena()
+test <- carga_datos_prueba()

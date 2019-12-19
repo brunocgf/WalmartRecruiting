@@ -10,10 +10,9 @@ library(tidyverse)
 library(ggthemes)
 library(gridExtra)
 library(kableExtra)
+library(feather)
 source("metadata.R")
 source("00-load.R")
-source("01-prepare.R")
-source("02-feature_engineering.R")
 ```
 
 
@@ -141,6 +140,20 @@ Esta función convierte las categorías en variables.
 ```{r, eval=FALSE}
 train_des <- feature_eng()
 write_feather(train_des, "train.feather")
+```
+
+A continuación se muestra la preparación para los datos de prueba
+
+```{r}
+
+m_upc <- mode(test$Upc)
+m_dep <- mode(test$DepartmentDescription)
+m_line <- mode(test$FinelineNumber)
+
+test <- test %>% 
+  mutate(Upc = replace_na(Upc,m_upc),
+         DepartmentDescription = replace(DepartmentDescription,DepartmentDescription=='NULL',m_dep),
+         FinelineNumber = replace_na(FinelineNumber,m_line))
 ```
 
 
