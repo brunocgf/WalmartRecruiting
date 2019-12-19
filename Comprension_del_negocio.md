@@ -69,7 +69,7 @@ str(train)
     ## Classes 'spec_tbl_df', 'tbl_df', 'tbl' and 'data.frame': 647054 obs. of  7 variables:
     ##  $ TripType             : Factor w/ 38 levels "3","4","5","6",..: 38 23 23 19 19 19 19 19 19 19 ...
     ##  $ VisitNumber          : int  5 7 7 8 8 8 8 8 8 8 ...
-    ##  $ Weekday              : Factor w/ 7 levels "Friday","Saturday",..: 1 1 1 1 1 1 1 1 1 1 ...
+    ##  $ Weekday              : Factor w/ 7 levels "Monday","Tuesday",..: 5 5 5 5 5 5 5 5 5 5 ...
     ##  $ Upc                  : num  6.81e+10 6.05e+10 7.41e+09 2.24e+09 2.01e+09 ...
     ##  $ ScanCount            : int  -1 1 1 2 2 2 1 1 1 -1 ...
     ##  $ DepartmentDescription: Factor w/ 69 levels "FINANCIAL SERVICES",..: 1 2 3 4 4 4 4 4 4 4 ...
@@ -81,7 +81,8 @@ str(train)
     ##   ..     "30", "31", "32", "33", "34", "35", "36", "37", "38", "39", "40", 
     ##   ..     "41", "42", "43", "44", "999"), ordered = FALSE, include_na = FALSE),
     ##   ..   VisitNumber = col_integer(),
-    ##   ..   Weekday = col_factor(levels = NULL, ordered = FALSE, include_na = FALSE),
+    ##   ..   Weekday = col_factor(levels = c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", 
+    ##   ..     "Sunday"), ordered = FALSE, include_na = FALSE),
     ##   ..   Upc = col_double(),
     ##   ..   ScanCount = col_integer(),
     ##   ..   DepartmentDescription = col_factor(levels = NULL, ordered = FALSE, include_na = FALSE),
@@ -98,13 +99,13 @@ summary(train)
 ```
 
     ##     TripType       VisitNumber          Weekday            Upc           
-    ##  40     :174164   Min.   :     5   Friday   : 96247   Min.   :8.340e+02  
-    ##  39     : 95504   1st Qu.: 49268   Saturday :122096   1st Qu.:3.400e+09  
-    ##  37     : 38954   Median : 97074   Sunday   :133975   Median :7.050e+09  
-    ##  38     : 29565   Mean   : 96168   Monday   : 83130   Mean   :3.061e+10  
-    ##  25     : 27609   3rd Qu.:144316   Tuesday  : 72529   3rd Qu.:3.007e+10  
-    ##  7      : 23199   Max.   :191347   Wednesday: 71115   Max.   :9.790e+11  
-    ##  (Other):258059                    Thursday : 67962   NA's   :4129       
+    ##  40     :174164   Min.   :     5   Monday   : 83130   Min.   :8.340e+02  
+    ##  39     : 95504   1st Qu.: 49268   Tuesday  : 72529   1st Qu.:3.400e+09  
+    ##  37     : 38954   Median : 97074   Wednesday: 71115   Median :7.050e+09  
+    ##  38     : 29565   Mean   : 96168   Thursday : 67962   Mean   :3.061e+10  
+    ##  25     : 27609   3rd Qu.:144316   Friday   : 96247   3rd Qu.:3.007e+10  
+    ##  7      : 23199   Max.   :191347   Saturday :122096   Max.   :9.790e+11  
+    ##  (Other):258059                    Sunday   :133975   NA's   :4129       
     ##    ScanCount               DepartmentDescription FinelineNumber
     ##  Min.   :-12.000   GROCERY DRY GOODS  : 70402    Min.   :   0  
     ##  1st Qu.:  1.000   DSD GROCERY        : 68332    1st Qu.:1404  
@@ -204,4 +205,5 @@ Esta función convierte las categorías en variables.
 
 ``` r
 train_des <- feature_eng()
+write_feather(train_des, "train.feather")
 ```

@@ -140,6 +140,7 @@ Esta función convierte las categorías en variables.
 
 ```{r, eval=FALSE}
 train_des <- feature_eng()
+write_feather(train_des, "train.feather")
 ```
 
 
