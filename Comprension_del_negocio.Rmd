@@ -20,11 +20,17 @@ source("00-load.R")
 
 ## Antecedentes
 
+Wal-Mart Stores, Inc. se dedica a negocios minoristas y mayoristas. Opera a través de los siguientes segmentos comerciales: Walmart U.S., Walmart International y Sam's Club. El segmento Walmart de EE. UU. incluye operaciones de tiendas minoristas y *e-commerce* en EE. UU. También ofrece servicios financieros y productos relacionados, como giros postales, tarjetas prepagas, transferencias bancarias, cambio de cheques y pago de facturas.
+
+El segmento de Walmart International se clasifica en operaciones minoristas, mayoristas y de otros formatos fuera de los EE. UU. Estas categorías incluyen supercentros, supermercados, hipermercados, clubes de almacenes, Sam's Clubs, efectivo y transporte, mejoras para el hogar, electrónica especializada, tienda de ropa, farmacias, tiendas de conveniencia y *e-commerce*.
+
+El segmento de Sam's Club comprende clubes de almacenes solo para miembros y samsclubs.com. Ofrece servicios especializados, compra de automóviles, farmacia, óptica, centros de audífonos, centros de neumáticos y baterías, y servicios de soporte de operaciones comerciales. La compañía fue fundada por Samuel Moore Walton y James Lawrence Walton el 2 de julio de 1962 y tiene su sede en Bentonville, AR.
+
+## Determinación del objetivo
+
 El objetivo de la competencia es categorizar las visitas de compras basado en los productos que ha adquirido el cliente, por ejemplo 'visita para una pequeña cena', 'visita para comprar regalos', etc.
 
 Walmart ya ha categorizado los viajes contenidos en estos datos dentro de 38 distintos tipos, usando un metodo propio en un extenso conjunto de datos.
-
-## Determinación del objetivo
 
 El reto es reproducir esta categorización con un conjunto de características más limitado. Esto puede proveer nuevas y más robustas maneras de categorizar los datos.
 
@@ -38,7 +44,6 @@ La predicción se evalúa usando la pérdida logarítmica multiclase. Por cada v
 # Compresión de los datos.
 
 ## Análisis Exploratorio de datos
-
 
 Empezamos viendo la estructura de la tabla de entrenamiento.
 ```{r}
@@ -131,29 +136,5 @@ train %>%
   
 ```
 
-# Preparación de Datos
-
-## Reporte reproducible de ingeniería de características
-
-Esta función convierte las categorías en variables.
-
-```{r, eval=FALSE}
-train_des <- feature_eng()
-write_feather(train_des, "train.feather")
-```
-
-A continuación se muestra la preparación para los datos de prueba
-
-```{r}
-
-m_upc <- mode(test$Upc)
-m_dep <- mode(test$DepartmentDescription)
-m_line <- mode(test$FinelineNumber)
-
-test <- test %>% 
-  mutate(Upc = replace_na(Upc,m_upc),
-         DepartmentDescription = replace(DepartmentDescription,DepartmentDescription=='NULL',m_dep),
-         FinelineNumber = replace_na(FinelineNumber,m_line))
-```
 
 

@@ -7,6 +7,31 @@ Bruno C. Gonzalez
 
 ## Antecedentes
 
+Wal-Mart Stores, Inc. se dedica a negocios minoristas y mayoristas.
+Opera a través de los siguientes segmentos comerciales: Walmart U.S.,
+Walmart International y Sam’s Club. El segmento Walmart de EE. UU.
+incluye operaciones de tiendas minoristas y *e-commerce* en EE. UU.
+También ofrece servicios financieros y productos relacionados, como
+giros postales, tarjetas prepagas, transferencias bancarias, cambio de
+cheques y pago de facturas.
+
+El segmento de Walmart International se clasifica en operaciones
+minoristas, mayoristas y de otros formatos fuera de los EE. UU. Estas
+categorías incluyen supercentros, supermercados, hipermercados, clubes
+de almacenes, Sam’s Clubs, efectivo y transporte, mejoras para el hogar,
+electrónica especializada, tienda de ropa, farmacias, tiendas de
+conveniencia y *e-commerce*.
+
+El segmento de Sam’s Club comprende clubes de almacenes solo para
+miembros y samsclubs.com. Ofrece servicios especializados, compra de
+automóviles, farmacia, óptica, centros de audífonos, centros de
+neumáticos y baterías, y servicios de soporte de operaciones
+comerciales. La compañía fue fundada por Samuel Moore Walton y James
+Lawrence Walton el 2 de julio de 1962 y tiene su sede en Bentonville,
+AR.
+
+## Determinación del objetivo
+
 El objetivo de la competencia es categorizar las visitas de compras
 basado en los productos que ha adquirido el cliente, por ejemplo ‘visita
 para una pequeña cena’, ‘visita para comprar regalos’, etc.
@@ -14,8 +39,6 @@ para una pequeña cena’, ‘visita para comprar regalos’, etc.
 Walmart ya ha categorizado los viajes contenidos en estos datos dentro
 de 38 distintos tipos, usando un metodo propio en un extenso conjunto de
 datos.
-
-## Determinación del objetivo
 
 El reto es reproducir esta categorización con un conjunto de
 características más limitado. Esto puede proveer nuevas y más robustas
@@ -41,14 +64,14 @@ head(train)
 
     ## # A tibble: 6 x 7
     ##   TripType VisitNumber Weekday     Upc ScanCount DepartmentDescr~
-    ##   <fct>          <int> <fct>     <dbl>     <int> <fct>           
+    ##   <fct>          <dbl> <fct>     <dbl>     <dbl> <chr>           
     ## 1 999                5 Friday  6.81e10        -1 FINANCIAL SERVI~
     ## 2 30                 7 Friday  6.05e10         1 SHOES           
     ## 3 30                 7 Friday  7.41e 9         1 PERSONAL CARE   
     ## 4 26                 8 Friday  2.24e 9         2 PAINT AND ACCES~
     ## 5 26                 8 Friday  2.01e 9         2 PAINT AND ACCES~
     ## 6 26                 8 Friday  2.01e 9         2 PAINT AND ACCES~
-    ## # ... with 1 more variable: FinelineNumber <int>
+    ## # ... with 1 more variable: FinelineNumber <dbl>
 
 *TripType* es la etiqueta sobre la que se deben clasificar cada una de
 las visitas, identificadas por la variable *VisitNumber*. *Weekday* es
@@ -68,25 +91,25 @@ str(train)
 
     ## Classes 'spec_tbl_df', 'tbl_df', 'tbl' and 'data.frame': 647054 obs. of  7 variables:
     ##  $ TripType             : Factor w/ 38 levels "3","4","5","6",..: 38 23 23 19 19 19 19 19 19 19 ...
-    ##  $ VisitNumber          : int  5 7 7 8 8 8 8 8 8 8 ...
+    ##  $ VisitNumber          : num  5 7 7 8 8 8 8 8 8 8 ...
     ##  $ Weekday              : Factor w/ 7 levels "Monday","Tuesday",..: 5 5 5 5 5 5 5 5 5 5 ...
     ##  $ Upc                  : num  6.81e+10 6.05e+10 7.41e+09 2.24e+09 2.01e+09 ...
-    ##  $ ScanCount            : int  -1 1 1 2 2 2 1 1 1 -1 ...
-    ##  $ DepartmentDescription: Factor w/ 69 levels "FINANCIAL SERVICES",..: 1 2 3 4 4 4 4 4 4 4 ...
-    ##  $ FinelineNumber       : int  1000 8931 4504 3565 1017 1017 1017 2802 4501 3565 ...
+    ##  $ ScanCount            : num  -1 1 1 2 2 2 1 1 1 -1 ...
+    ##  $ DepartmentDescription: chr  "FINANCIAL SERVICES" "SHOES" "PERSONAL CARE" "PAINT AND ACCESSORIES" ...
+    ##  $ FinelineNumber       : num  1000 8931 4504 3565 1017 ...
     ##  - attr(*, "spec")=
     ##   .. cols(
     ##   ..   TripType = col_factor(levels = c("3", "4", "5", "6", "7", "8", "9", "12", "14", "15", "18", 
     ##   ..     "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", 
     ##   ..     "30", "31", "32", "33", "34", "35", "36", "37", "38", "39", "40", 
     ##   ..     "41", "42", "43", "44", "999"), ordered = FALSE, include_na = FALSE),
-    ##   ..   VisitNumber = col_integer(),
+    ##   ..   VisitNumber = col_double(),
     ##   ..   Weekday = col_factor(levels = c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", 
     ##   ..     "Sunday"), ordered = FALSE, include_na = FALSE),
     ##   ..   Upc = col_double(),
-    ##   ..   ScanCount = col_integer(),
-    ##   ..   DepartmentDescription = col_factor(levels = NULL, ordered = FALSE, include_na = FALSE),
-    ##   ..   FinelineNumber = col_integer()
+    ##   ..   ScanCount = col_double(),
+    ##   ..   DepartmentDescription = col_character(),
+    ##   ..   FinelineNumber = col_double()
     ##   .. )
 
 En la tabla anterior podemos ver que existen 38 diferentes tipos de
@@ -106,14 +129,14 @@ summary(train)
     ##  25     : 27609   3rd Qu.:144316   Friday   : 96247   3rd Qu.:3.007e+10  
     ##  7      : 23199   Max.   :191347   Saturday :122096   Max.   :9.790e+11  
     ##  (Other):258059                    Sunday   :133975   NA's   :4129       
-    ##    ScanCount               DepartmentDescription FinelineNumber
-    ##  Min.   :-12.000   GROCERY DRY GOODS  : 70402    Min.   :   0  
-    ##  1st Qu.:  1.000   DSD GROCERY        : 68332    1st Qu.:1404  
-    ##  Median :  1.000   PRODUCE            : 51115    Median :3352  
-    ##  Mean   :  1.109   DAIRY              : 43820    Mean   :3727  
-    ##  3rd Qu.:  1.000   PERSONAL CARE      : 41969    3rd Qu.:5501  
-    ##  Max.   : 71.000   IMPULSE MERCHANDISE: 28712    Max.   :9998  
-    ##                    (Other)            :342704    NA's   :4129
+    ##    ScanCount       DepartmentDescription FinelineNumber
+    ##  Min.   :-12.000   Length:647054         Min.   :   0  
+    ##  1st Qu.:  1.000   Class :character      1st Qu.:1404  
+    ##  Median :  1.000   Mode  :character      Median :3352  
+    ##  Mean   :  1.109                         Mean   :3727  
+    ##  3rd Qu.:  1.000                         3rd Qu.:5501  
+    ##  Max.   : 71.000                         Max.   :9998  
+    ##                                          NA's   :4129
 
 De las estadísticas mostradas es importante hacer notar que el número de
 cada tipo de visitas es inexacto, dado que cada observación de la tabla
@@ -196,14 +219,3 @@ train %>%
 ```
 
 ![](Comprension_del_negocio_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
-
-# Preparación de Datos
-
-## Reporte reproducible de ingeniería de características
-
-Esta función convierte las categorías en variables.
-
-``` r
-train_des <- feature_eng()
-write_feather(train_des, "train.feather")
-```

@@ -75,15 +75,18 @@ train_des <- limpios_train %>%
               values_from = 'ScanCount',
               values_fn = list(ScanCount = sum)) %>% 
   map_dfr(~replace_na(.,0)) %>% 
-  mutate(Weekday = as.integer(Weekday))
+  mutate(Weekday = as.integer(Weekday)) %>% 
+  select(TripType, VisitNumber, Weekday, level_d)
 
-test_des <- limpios_test %>%
+test_des <- test %>%
   pivot_wider(id_cols = c('VisitNumber','Weekday'),
               names_from = 'DepartmentDescription',
               values_from = 'ScanCount',
               values_fn = list(ScanCount = sum)) %>% 
   map_dfr(~replace_na(.,0)) %>% 
-  mutate(Weekday = as.integer(Weekday))
+  mutate(Weekday = as.integer(Weekday),
+         'HEALTH AND BEAUTY AIDS' = 0) %>% 
+  select(VisitNumber, Weekday, level_d)
 
-## write_feather(train_des, "train.feather")
+write_feather(train_des, "train.feather")
 write_feather(test_des, "test.feather")

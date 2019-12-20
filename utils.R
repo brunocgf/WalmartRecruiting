@@ -1,5 +1,7 @@
 #Funcion para carga automatica o instalacion, en su defecto, de los paquetes
 #necesarios para que el examen sea reproducible
+
+source('metadata.R')
 instalar <- function(paquete) {
   
   if (!require(paquete,character.only = TRUE, quietly = TRUE, warn.conflicts = FALSE)) {
@@ -17,8 +19,8 @@ carga_datos_entrena <- function(){
   if(file.exists('train.csv')){
     datos <- read_csv('train.csv',
                       col_types = cols(
-                        TripType = col_factor(levels = l),
-                        Weekday = col_factor(levels = w)))
+                        TripType = col_factor(levels = level_l),
+                        Weekday = col_factor(levels = level_w)))
     print('Datos existen y se han cargado')
   }
   else{
@@ -37,8 +39,7 @@ carga_datos_prueba <- function(){
   if(file.exists('test.csv')){
     datos <- read_csv('test.csv',
                       col_types = cols(
-                        TripType = col_factor(levels = l),
-                        Weekday = col_factor(levels = w)))
+                        Weekday = col_factor(levels = level_w)))
     print('Datos existen y se han cargado')
   }
   else{
@@ -46,8 +47,7 @@ carga_datos_prueba <- function(){
     dir_web <- 'https://raw.githubusercontent.com/brunocgf/WalmartRecruiting/master/data/test.csv'
     datos <- read_csv(dir_web,
                       col_types = cols(
-                        TripType = col_factor(levels = l),
-                        Weekday = col_factor(levels = w)))
+                        Weekday = col_factor(levels = level_w)))
     print('Datos descargados y listos para usarse')
   }
   return(datos)
