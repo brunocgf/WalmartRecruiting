@@ -1,6 +1,8 @@
 ---
 title: "Comprensión del negocio"
-author: "Bruno C. Gonzalez"
+author:
+- "Fernando Arreola"
+- "Bruno Gonzalez"
 date: "16/12/2019"
 output: github_document
 ---
@@ -37,8 +39,6 @@ El reto es reproducir esta categorización con un conjunto de características m
 ## Determinación del criterio de éxito
 
 La predicción se evalúa usando la pérdida logarítmica multiclase. Por cada visita se debe ingresar un conjunto de probabilidades por cada *tipo de viaje*.
-
-## Plan del proyecto
 
 
 # Compresión de los datos.
@@ -126,13 +126,14 @@ Ahora veamos la relación entre el tipo de viaje y el Departament, con base el n
 train %>%
   group_by(TripType, DepartmentDescription) %>% 
   summarise(n = sum(ScanCount)) %>% 
-  semi_join(train %>% group_by(DepartmentDescription) %>% summarise(n=n()) %>% filter(n>3000),
+  semi_join(train %>% group_by(DepartmentDescription) %>% summarise(n=n()) %>% filter(n>5000),
             by = 'DepartmentDescription') %>% 
   ggplot(aes(x = TripType, y = DepartmentDescription, fill = n)) +
   geom_tile() +
   scale_fill_continuous(low="white", high="steelblue4") +
   theme(axis.title.x = element_blank(),
-      axis.title.y = element_blank())
+      axis.title.y = element_blank(),
+      panel.background = element_rect(fill = "white"))
   
 ```
 

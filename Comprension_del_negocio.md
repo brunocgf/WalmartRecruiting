@@ -1,6 +1,6 @@
 Comprensión del negocio
 ================
-Bruno C. Gonzalez
+Fernando Arreola
 16/12/2019
 
 # Comprención del Negocio
@@ -49,8 +49,6 @@ maneras de categorizar los datos.
 La predicción se evalúa usando la pérdida logarítmica multiclase. Por
 cada visita se debe ingresar un conjunto de probabilidades por cada
 *tipo de viaje*.
-
-## Plan del proyecto
 
 # Compresión de los datos.
 
@@ -209,13 +207,14 @@ base el número de artículos comprados.
 train %>%
   group_by(TripType, DepartmentDescription) %>% 
   summarise(n = sum(ScanCount)) %>% 
-  semi_join(train %>% group_by(DepartmentDescription) %>% summarise(n=n()) %>% filter(n>3000),
+  semi_join(train %>% group_by(DepartmentDescription) %>% summarise(n=n()) %>% filter(n>5000),
             by = 'DepartmentDescription') %>% 
   ggplot(aes(x = TripType, y = DepartmentDescription, fill = n)) +
   geom_tile() +
   scale_fill_continuous(low="white", high="steelblue4") +
   theme(axis.title.x = element_blank(),
-      axis.title.y = element_blank())
+      axis.title.y = element_blank(),
+      panel.background = element_rect(fill = "white"))
 ```
 
 ![](Comprension_del_negocio_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
